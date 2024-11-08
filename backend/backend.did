@@ -1,5 +1,16 @@
 type Time = int;
+type CryptoData = 
+ record {
+   id: text;
+   lastUpdate: Time;
+   price: float64;
+ };
 service : {
+  getCurrentCryptos: () -> (vec CryptoData) query;
   getLastUpdate: () -> (Time) query;
-  getTopCryptos: () -> (vec text) query;
+  getRandomCryptos: () -> (vec text);
+  updateCryptoPrices: (vec record {
+                             text;
+                             float64;
+                           }) -> ();
 }
