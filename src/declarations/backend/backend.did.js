@@ -1,6 +1,6 @@
 export const idlFactory = ({ IDL }) => {
   return IDL.Service({
-    'getRandomCryptos' : IDL.Func([], [IDL.Vec(IDL.Text)], []),
+    'getTopCryptos' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
   });
 };
 export const init = ({ IDL }) => { return []; };

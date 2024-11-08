@@ -1,17 +1,18 @@
-import Bool "mo:base/Bool";
-import Func "mo:base/Func";
 import List "mo:base/List";
+import Nat "mo:base/Nat";
+import Nat64 "mo:base/Nat64";
 
-import Random "mo:base/Random";
-import Array "mo:base/Array";
-import Iter "mo:base/Iter";
+import Timer "mo:base/Timer";
 import Time "mo:base/Time";
 import Text "mo:base/Text";
 import Buffer "mo:base/Buffer";
-import Nat8 "mo:base/Nat8";
-import Nat "mo:base/Nat";
+import Array "mo:base/Array";
+import Iter "mo:base/Iter";
 
 actor {
+    stable var currentCryptos : [Text] = [];
+    stable var timerId : Nat = 0;
+
     // List of top 100 cryptocurrency IDs from CoinGecko
     let cryptoIds : [Text] = [
         "bitcoin", "ethereum", "tether", "binancecoin", "ripple", "usd-coin", "steth", 
@@ -32,35 +33,26 @@ actor {
         "numeraire", "orchid-protocol", "fetch-ai", "cartesi", "ocean-protocol", "band-protocol"
     ];
 
-    // Function to get random crypto IDs
-    public func getRandomCryptos() : async [Text] {
-        let seed = Random.Finite(await Random.blob());
-        let selectedIndices = Buffer.Buffer<Nat>(10);
-        var attempts = 0;
-
-        while (selectedIndices.size() < 10 and attempts < 100) {
-            switch (seed.byte()) {
-                case null { attempts += 1; };
-                case (?val) {
-                    let index = Nat8.toNat(val) % cryptoIds.size();
-                    let exists = Array.find<Nat>(
-                        Buffer.toArray(selectedIndices),
-                        func (x : Nat) : Bool { x == index }
-                    );
-                    switch (exists) {
-                        case null { selectedIndices.add(index); };
-                        case (?_) { };
-                    };
-                    attempts += 1;
-                };
-            };
+    // Update the current crypto selection
+    private func updateCryptos() {
+        let result = Buffer.Buffer<Text>(9);
+        for (i in Iter.range(0, 8)) {
+            result.add(cryptoIds[i]);
         };
+        currentCryptos := Buffer.toArray(result);
+    };
 
-        let result = Buffer.Buffer<Text>(10);
-        for (index in selectedIndices.vals()) {
-            result.add(cryptoIds[index]);
-        };
-        
-        Buffer.toArray(result)
+    // Initialize the cryptocurrencies
+    updateCryptos();
+
+    // System timer function
+    system func timer(setTimer : Nat64 -> ()) : async () {
+        updateCryptos();
+        setTimer(3600_000_000_000); // Set timer for 1 hour (in nanoseconds)
+    };
+
+    // Public function to get current top 9 cryptocurrencies
+    public query func getTopCryptos() : async [Text] {
+        currentCryptos
     };
 }
