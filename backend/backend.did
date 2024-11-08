@@ -1,3 +1,5 @@
+type Time = int;
 service : {
+  getLastUpdate: () -> (Time) query;
   getTopCryptos: () -> (vec text) query;
 }

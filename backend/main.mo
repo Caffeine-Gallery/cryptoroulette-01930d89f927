@@ -11,7 +11,7 @@ import Iter "mo:base/Iter";
 
 actor {
     stable var currentCryptos : [Text] = [];
-    stable var timerId : Nat = 0;
+    stable var lastUpdate : Time.Time = 0;
 
     // List of top 100 cryptocurrency IDs from CoinGecko
     let cryptoIds : [Text] = [
@@ -40,12 +40,13 @@ actor {
             result.add(cryptoIds[i]);
         };
         currentCryptos := Buffer.toArray(result);
+        lastUpdate := Time.now();
     };
 
     // Initialize the cryptocurrencies
     updateCryptos();
 
-    // System timer function
+    // System timer function for periodic updates
     system func timer(setTimer : Nat64 -> ()) : async () {
         updateCryptos();
         setTimer(3600_000_000_000); // Set timer for 1 hour (in nanoseconds)
@@ -54,5 +55,10 @@ actor {
     // Public function to get current top 9 cryptocurrencies
     public query func getTopCryptos() : async [Text] {
         currentCryptos
+    };
+
+    // Get last update timestamp
+    public query func getLastUpdate() : async Time.Time {
+        lastUpdate
     };
 }
