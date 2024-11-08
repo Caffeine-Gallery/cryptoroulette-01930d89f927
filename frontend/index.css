@@ -1,0 +1,37 @@
+.crypto-card {
+    transition: transform 0.2s;
+    margin-bottom: 20px;
+}
+
+.crypto-card:hover {
+    transform: translateY(-5px);
+}
+
+.price-up {
+    color: #28a745;
+}
+
+.price-down {
+    color: #dc3545;
+}
+
+.crypto-image {
+    width: 32px;
+    height: 32px;
+    margin-right: 10px;
+}
+
+.timer-text {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+}
+
+.price-change {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
